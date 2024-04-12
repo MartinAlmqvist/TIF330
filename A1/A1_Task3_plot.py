@@ -1,22 +1,21 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Load data from the file
-data = np.loadtxt('results.txt')
+# Load Ey data from the file
+Ey_data = np.loadtxt('results_Bz.txt')
 
-# Extract Ey and Bz from the data
-Ey = data[:, 0]
-Bz = data[:, 1]
+# Create a meshgrid for time and space
+t = np.arange(0, Ey_data.shape[0]) * 0.01  # Time
+x = np.linspace(-0.1, 0.1, Ey_data.shape[1])  # Space
 
-# Create an array for x values
-x = np.linspace(-0.1, 0.1, len(Ey))
+# Create meshgrid for plotting
+T, X = np.meshgrid(t, x)
 
-# Plot Ey and Bz
-plt.plot(x, Ey, label='Ey')
-plt.plot(x, Bz, label='Bz')
-plt.xlabel('x')
-plt.ylabel('Field Strength')
-plt.title('Electric and Magnetic Field Evolution')
-plt.legend()
-plt.grid(True)
+# Plot meshgrid
+plt.figure(figsize=(10, 6))
+plt.pcolormesh(T, X, Ey_data.T, cmap='viridis')  # Transpose Ey_data
+plt.colorbar(label='Ey')
+plt.xlabel('Time')
+plt.ylabel('Space')
+plt.title('Meshgrid for Ey over Time and Space')
 plt.show()
