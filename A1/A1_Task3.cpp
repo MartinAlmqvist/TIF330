@@ -7,7 +7,7 @@
 #include <cmath>
 
 // Constants
-const double dx = 0.001; // Spatial step size
+const double dx = 0.002; // Spatial step size
 const double dt = 0.001; // Time step size
 const long nx = 2/dx + 1; // Number of space points
 const long nt = 5/dt + 1; // Number of time steps

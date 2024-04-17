@@ -28,6 +28,12 @@ set_plot_style()
 # Load data 
 Ey_data = np.loadtxt('results_Ey.txt')
 Bz_data = np.loadtxt('results_Bz.txt')
+max_value = np.max(Ey_data)
+min_value = np.min(Ey_data)
+
+print(max_value)
+print(min_value)
+print(Ey_data.shape[1])
 
 # create time and space steps
 t = np.arange(0, Ey_data.shape[0]) * 0.01  # Time
@@ -59,7 +65,7 @@ plt.tight_layout()
 plt.savefig('Figures/A1_B_inf.png')
 plt.show()
  """
-plt.pcolormesh(X, T, Ey_data.T, cmap='plasma', shading='auto')
+plt.pcolormesh(X, T, Ey_data.T, cmap='viridis', shading='auto')
 plt.colorbar(label='E-field ($\hat{y}$)')
 plt.xlabel('Space ($\hat{x}$)')
 plt.ylabel('Time')
@@ -68,7 +74,7 @@ plt.tight_layout()
 """ plt.xlim(-0.1, 0.2)
 plt.ylim(0,0.5) """
 #plt.savefig('Figures/A1_E_IC_zoom.png')
-plt.savefig('Figures/A1_E_IC.png')
+plt.savefig('Figures/A1_E_IC_disp.png')
 plt.show()
 
 # Plot Bz
@@ -78,5 +84,5 @@ plt.xlabel('Space ($\hat{x}$)')
 plt.ylabel('Time')
 plt.title('Change in B-field over Time and Space - Ideal Conductor')
 plt.tight_layout()
-plt.savefig('Figures/A1_B_IC.png')
+plt.savefig('Figures/A1_B_IC_disp.png')
 plt.show()  
