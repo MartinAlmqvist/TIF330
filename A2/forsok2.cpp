@@ -90,23 +90,41 @@ void apply_kinetic_operator(std::complex<double>** psi, int N, double dk) {
 
 // Function to perform inverse Fourier transform to position space
 void transform_to_position_space(std::complex<double>** psi, int N) {
-    fftw_complex *in = reinterpret_cast<fftw_complex*>(psi[0]);
-    fftw_complex *out = reinterpret_cast<fftw_complex*>(psi[0]);
-    fftw_plan plan = fftw_plan_dft_2d(N, N, in, out, FFTW_BACKWARD, FFTW_ESTIMATE);
-    fftw_execute(plan);
-    fftw_destroy_plan(plan);
-    double normalization_factor = 1.0 / (N * N);
+    fftw_complex *in;
+    fftw_complex *out;
+    fftw_plan p;
+    
+    in = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N * N);
+    out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N * N);
+    
+    // Copy data from psi to in array
     for (int i = 0; i < N; ++i) {
         for (int j = 0; j < N; ++j) {
-            psi[i][j] *= normalization_factor;
+            in[i * N + j][0] = psi[i][j].real();  // Real part
+            in[i * N + j][1] = psi[i][j].imag();  // Imaginary part
         }
     }
+    
+    p = fftw_plan_dft_2d(N, N, in, out, FFTW_BACKWARD, FFTW_ESTIMATE);
+    fftw_execute(p);
+    fftw_destroy_plan(p);
+    
+    // Copy the transformed data back to psi
+    for (int i = 0; i < N; ++i) {
+        for (int j = 0; j < N; ++j) {
+            psi[i][j] = std::complex<double>(out[i * N + j][0] / (N * N), out[i * N + j][1] / (N * N));
+        }
+    }
+    
+    fftw_free(in);
+    fftw_free(out);
 }
 
 int main() {
-    const int N = 64*40; // Number of grid points
+    const int N = 64; // Number of grid points
     const double L = 20.0; // Size of the spatial grid
     const double dx = L / N; // Spatial step
+    const double dk = 2 * M_PI / L; // Fourier step
     const int tmax = 100;
 
     // Allocate memory for the wave function
@@ -133,7 +151,7 @@ int main() {
         transform_to_momentum_space(psi, N);
 
         // Apply the kinetic energy operator in momentum space
-        apply_kinetic_operator(psi, N, dx);
+        apply_kinetic_operator(psi, N, dk);
 
         // Transform the wave function back to position space
         transform_to_position_space(psi, N);

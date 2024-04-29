@@ -2,22 +2,26 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.fft import fft, fftfreq
 
-# Load data from CSV file
-data = np.loadtxt('wave_function_values.csv', delimiter=',')
+# Read the CSV file
+data = np.genfromtxt('wave_function_values.csv', delimiter=',')
 
 # Extract time and wave function values
 time = data[:, 0]
-wave_function = data[:, 1]
+wave_function = data[:, 1] + 1j * data[:, 2]  # Combine real and imaginary parts
 
-# Compute FFT of the wave function
-fft_values = fft(wave_function)
-freqs = fftfreq(len(time), d=time[1] - time[0])
+# Compute the Fourier transform of the wave function
+fourier_transform = fft(wave_function)
 
-# Plot temporal spectrum
-plt.figure()
-plt.plot(freqs, np.abs(fft_values))
+# Compute the frequencies corresponding to the Fourier transform
+sampling_frequency = 1 / (time[1] - time[0])
+frequencies = fftfreq(len(time), 1 / sampling_frequency)
+
+# Plot the temporal spectrum
+plt.figure(figsize=(10, 6))
+plt.plot(frequencies, np.abs(fourier_transform))
+plt.title('Temporal Spectrum of Psi(0.1, 0)')
 plt.xlabel('Frequency')
-plt.ylabel('Amplitude')
-plt.title('Temporal Spectrum of Wave Function at (0.1, 0)')
+plt.ylabel('Magnitude')
+plt.xlim(0, 0.5 * sampling_frequency)  # Plot only positive frequencies
 plt.grid(True)
 plt.show()
